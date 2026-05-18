@@ -732,18 +732,22 @@ async def delete_utm(call: CallbackQuery, bot: Bot, state: FSMContext):
 @router.callback_query(F.data.startswith("delete_utm_"))
 async def delete_utm_direct(call: CallbackQuery, bot: Bot):
     if call.message.chat.id in admins_id:
-        # Извлекаем URL (убираем "delete_utm_" в начале)
         url = call.data.replace("delete_utm_", "")
         
         try:
-            await  delete_utm(url,bot,state)
-            await bot.answer_callback_query(call.id, "✅ UTM-ссылка успешно удалена!")
+            import sqlite3
+            from database import DATABASE_NAME
+            conn = sqlite3.connect(DATABASE_NAME)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM utm_data WHERE url = ?", (url,))
+            conn.commit()
+            conn.close()
             
-            # Возвращаемся к списку ссылок
+            await bot.answer_callback_query(call.id, "✅ Ссылка удалена!")
             await bot.delete_message(call.message.chat.id, call.message.message_id)
             await list_utm(call, bot)
         except Exception as e:
-            await bot.answer_callback_query(call.id, f"❌ Ошибка при удалении: {e}", show_alert=True)
+            await bot.answer_callback_query(call.id, f"❌ Ошибка: {e}", show_alert=True)
 
 @router.callback_query(F.data == "add_utm")
 async def add_utm(message: Message, bot: Bot, state: FSMContext):
