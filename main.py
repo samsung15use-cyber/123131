@@ -736,7 +736,7 @@ async def delete_utm_direct(call: CallbackQuery, bot: Bot):
         url = call.data.replace("delete_utm_", "")
         
         try:
-            delete_utm(url)
+            await  delete_utm(url,bot,state)
             await bot.answer_callback_query(call.id, "✅ UTM-ссылка успешно удалена!")
             
             # Возвращаемся к списку ссылок
