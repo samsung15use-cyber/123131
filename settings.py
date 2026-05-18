@@ -1,4 +1,4 @@
-TOKEN = "8836893501:AAFXqitzOaWQl-Eb4QrLHDnyXBwnQExQ-hg" #сюда токен бота
+TOKEN = "8836893501:AAFXaJdfGz-mePM26Z_97_jHqvb7XJj9SNo" #сюда токен бота
 
 admins_id = [1417003901]
 
