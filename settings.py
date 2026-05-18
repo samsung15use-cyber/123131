@@ -7,7 +7,7 @@ HIVIEWS_TOKEN = ""
 FLYER_TOKEN = ''
 
 
-admin_username "@BorutoHelper" #свой username
+admin_username = "@BorutoHelper" #свой username
 admin_link = "https://t.me/borutohelper"
 
 GIFT_AMOUNT = 1.0 # ежедневый гифт
