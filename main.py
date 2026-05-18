@@ -724,10 +724,26 @@ async def utm_callback(call: CallbackQuery, bot: Bot):
         await bot.send_message(call.from_user.id, f"<b>🍀 Вы выбрали ссылку <code>#{url_title}</code></b>\n\n<blockquote>👤 Все пользователи: {count_users}\n👤 Прошли ОП: {count_op_users}</blockquote>", parse_mode='HTML', reply_markup=markup_utm_use)
 
 @router.callback_query(F.data == "delete_utm")
-async def delete_utm_(call: CallbackQuery, bot: Bot, state: FSMContext):
+async def delete_utm(call: CallbackQuery, bot: Bot, state: FSMContext):
     if call.message.chat.id in admins_id:
         await state.set_state(AddUtmState.waiting_for_delete)
         await bot.send_message(call.from_user.id, "🌐 Введите название UTM-ссылки:", parse_mode='HTML')
+
+@router.callback_query(F.data.startswith("delete_utm_"))
+async def delete_utm_direct(call: CallbackQuery, bot: Bot):
+    if call.message.chat.id in admins_id:
+        # Извлекаем URL (убираем "delete_utm_" в начале)
+        url = call.data.replace("delete_utm_", "")
+        
+        try:
+            delete_utm(url)
+            await bot.answer_callback_query(call.id, "✅ UTM-ссылка успешно удалена!")
+            
+            # Возвращаемся к списку ссылок
+            await bot.delete_message(call.message.chat.id, call.message.message_id)
+            await list_utm(call, bot)
+        except Exception as e:
+            await bot.answer_callback_query(call.id, f"❌ Ошибка при удалении: {e}", show_alert=True)
 
 @router.callback_query(F.data == "add_utm")
 async def add_utm(message: Message, bot: Bot, state: FSMContext):
